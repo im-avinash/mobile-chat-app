@@ -4,15 +4,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { api } from '../api/client';
 import { useAuth } from '../context/AuthContext';
 import UserListItem from '../components/UserListItem';
-import { getSocket, closeSocket } from '../services/socket';
+import { getSocket } from '../services/socket';
 
 export default function HomeScreen({ navigation }) {
-  const { token, user, logout } = useAuth();
+  const { token, user, logout, socket } = useAuth();
   const [users, setUsers] = useState([]);
   const [online, setOnline] = useState({});
   const [refreshing, setRefreshing] = useState(false);
-
-  const socket = useMemo(() => getSocket(token), [token]);
 
   const load = async () => {
     try {
@@ -29,7 +27,6 @@ export default function HomeScreen({ navigation }) {
     }, [])
   );
 
-
   useEffect(() => {
     if (!socket) return;
 
@@ -38,15 +35,12 @@ export default function HomeScreen({ navigation }) {
 
     const onPresence = ({ userId, online: isOn }) => setOnline(prev => ({ ...prev, [userId]: isOn }));
 
-
     socket.on('presence:update', onPresence);
 
     return () => {
       socket.off('presence:update', onPresence);
     };
   }, [socket, token]);
-
-  useEffect(() => () => closeSocket(), []);
 
   return (
     <View style={{ flex: 1 }}>

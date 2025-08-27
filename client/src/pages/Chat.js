@@ -8,14 +8,11 @@ import MessageBubble from '../components/MessageBubble';
 
 export default function ChatScreen({ route }) {
   const { peer } = route.params; // peer = { id, name, ... }
-  const { token, user } = useAuth();
+  const { token, user, socket } = useAuth();
   const [messages, setMessages] = useState([]);
   const [text, setText] = useState('');
   const [peerTyping, setPeerTyping] = useState(false);
   const listRef = useRef(null);
-
-  // create/get socket. If your getSocket requires a token param, it will be used.
-  const socket = useMemo(() => getSocket(token), [token]);
 
   // load conversation messages once
   useEffect(() => {
@@ -64,7 +61,7 @@ export default function ChatScreen({ route }) {
 
       // only include messages that belong to this conversation
       if (String(m.from) === String(peer.id) || String(m.to) === String(peer.id)) {
-        if (msg.clientId) {
+        if (msg.clientId && String(m.from) === String(user.id)) {
           // Correctly find and replace the optimistic message
           setMessages(prev => prev.map(oldMsg => oldMsg.id === msg.clientId ? m : oldMsg));
         } else {
