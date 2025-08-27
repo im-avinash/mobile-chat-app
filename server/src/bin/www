@@ -1,0 +1,33 @@
+#!/usr/bin/env node
+
+import http from 'http';
+import dotenv from "dotenv";
+import app from '../app.js';
+import { connectDB } from '../db.js';
+import { initSocket } from '../socket.js';
+
+// Load environment variables
+dotenv.config();
+
+const port = normalizePort(process.env.PORT || '4000');
+app.set('port', port);
+// Create HTTP server
+const server = http.createServer(app);
+
+// Initialize Socket.io
+const origins = process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN?.split(',') : '*';
+const io = initSocket(server, origins);
+// Connect DB and then start server
+connectDB(process.env.MONGO_URI).then(() => {
+  server.listen(port, () => console.log(`API + Socket running on :${port}`));
+  app.set('io', io)
+}).catch((err) => {
+  console.error("DB connection failed:", err.message);
+  process.exit(1);
+});
+function normalizePort(val) {
+  const port = parseInt(val, 10);
+  if (isNaN(port)) return val;
+  if (port >= 0) return port;
+return false;
+}
