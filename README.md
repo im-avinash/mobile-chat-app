@@ -1,6 +1,8 @@
 # mobile-chat-app
 MVP real-time 1:1 chat with auth, user list, online status, typing indicator, delivery/read receipts, and message persistence.
 Chat App (client (React Native) and server (Node.js + Express + Socket.IO) organized clearly)
+```
+---------------------------------------------------------------------------
 mobile-chat-app/
 ├── client/                           # React Native (Expo) app 📱
 │   ├── src/
@@ -55,7 +57,8 @@ mobile-chat-app/
 │
 ├── README.md
 └── package.json                      # Root package for monorepo
-
+---------------------------------------------------------------------------
+```
 ## 🚀 Features
 - 🔑 **Authentication** (Register/Login with JWT)
 - 👥 **User List** – view all users and start a conversation
